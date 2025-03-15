@@ -1,0 +1,22 @@
+do not read every single line of code -> understand the whole, the blocks of the application
+
+contrubuting.md to gather information
+
+check the entry points of the code to understand the whole
+ - check the cli -> it will show more of how the codebase works
+
+hot functions
+ - see what are the functions that are called all the time
+ - gather information about the core used by the project
+
+data flow
+ - behind schemas you can resolve what is going on the data flow design
+
+share
+ - "...if you find the code tricky to understand then likely others will too"
+ - share what you learn so people that comes after you have an easier journey, this is also a way to contribute and show knowledge 
+
+high level
+ - after getting some "high level structure" idea of the codebase, jump in debugging
+
+.github/pull_request_template	
