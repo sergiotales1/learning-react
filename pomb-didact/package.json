@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "gosling.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile:step-i": "npx babel step-i/src/gosling.js --out-file step-i/src/gosling-compiled.js",
+    "compile:step-ii": "npx babel step-ii/src/gosling.js --out-file step-ii/src/gosling-compiled.js",
+    "compile:step-iii-and-iv": "npx babel step-iii-and-iv/src/gosling.js --out-file step-iii-and-iv/src/gosling-compiled.js"
   },
   "keywords": [],
   "author": "SergioTales1",
