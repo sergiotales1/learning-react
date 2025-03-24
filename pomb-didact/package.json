@@ -3,15 +3,26 @@
   "version": "1.0.0",
   "main": "gosling.js",
   "scripts": {
-    "compile:step-i": "npx babel step-i/src/gosling.js --out-file step-i/src/gosling-compiled.js",
-    "compile:step-ii": "npx babel step-ii/src/gosling.js --out-file step-ii/src/gosling-compiled.js",
-    "compile:step-iii-and-iv": "npx babel step-iii-and-iv/src/gosling.js --out-file step-iii-and-iv/src/gosling-compiled.js"
+    "test": "jest & ",
+    "test:watch": "jest --watch",
+    "compile:step-i": "npx babel step-i/src/gosling.js --out-file step-i/src/gosling-compiled.js --watch",
+    "compile:step-ii": "npx babel step-ii/src/gosling.js --out-file step-ii/src/gosling-compiled.js --watch",
+    "compile:step-iii-and-iv": "npx babel step-iii-and-iv/src/gosling.js --out-file step-iii-and-iv/src/gosling-compiled.js --watch",
+    "dev:step-iii-and-iv": "concurrently \"npm run compile:step-iii-and-iv\" \"npm run test:watch\""
   },
   "keywords": [],
   "author": "SergioTales1",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@babel/preset-react": "^7.26.3"
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^26.0.0"
+  },
+  "dependencies": {
+    "ric-shim": "^1.0.1"
   }
 }
