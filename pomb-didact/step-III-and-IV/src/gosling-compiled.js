@@ -56,7 +56,6 @@ function workLoop(deadline) {
   var shouldYield = false;
   while (nextUnitOfWork && !shouldYield) {
     // console.log("unit of work", nextUnitOfWork);
-    console.log("a");
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
   }
@@ -87,7 +86,7 @@ function performUnitOfWork(fiber) {
       prevSibling.sibling = newFiber;
     }
     prevSibling = newFiber;
-    console.log(prevSibling);
+    // console.log(prevSibling);
     index++;
   }
   if (fiber.child) {
