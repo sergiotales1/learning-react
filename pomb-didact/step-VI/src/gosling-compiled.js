@@ -30,7 +30,9 @@ function createTextElement(text) {
 }
 function createDom(fiber) {
   var dom = fiber.type == "TEXT_ELEMENT" ? document.createTextNode("") : document.createElement(fiber.type);
-  updateDom(dom, {}, fiber.props);
+
+  // updateDom(dom, {}, fiber.props);
+
   return dom;
 }
 var isEvent = function isEvent(key) {
@@ -50,7 +52,7 @@ var isGone = function isGone(prev, next) {
   };
 };
 function updateDom(dom, prevProps, nextProps) {
-  //Remove old or changed event listeners
+  // Remove old or changed event listeners
   Object.keys(prevProps).filter(isEvent).filter(function (key) {
     return !(key in nextProps) || isNew(prevProps, nextProps)(key);
   }).forEach(function (name) {
@@ -119,6 +121,8 @@ function workLoop(deadline) {
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
   }
+  // console.log(currentRoot);
+
   requestIdleCallback(workLoop);
 }
 requestIdleCallback(workLoop);
@@ -128,6 +132,11 @@ function performUnitOfWork(fiber) {
   }
   var elements = fiber.props.children;
   reconcileChildren(fiber, elements);
+
+  // reconcileChildren will usually create fiber.child
+  // console.log(fiber.child);
+
+  // this is the logic responsible to set the next nextUnitOfWork
   if (fiber.child) {
     return fiber.child;
   }
@@ -139,14 +148,31 @@ function performUnitOfWork(fiber) {
     nextFiber = nextFiber.parent;
   }
 }
+
+/** Creates newFiber, apply tags to them ("PLACEMENT", "UPDATE", "DELETION") and links each fiber to its parent / child / sibling */
 function reconcileChildren(wipFiber, elements) {
   var index = 0;
+  // The && operator returns the value of the first falsy operand it encounters, or the value of the last operand if all operands are truthy.
   var oldFiber = wipFiber.alternate && wipFiber.alternate.child;
+
+  // if (wipFiber.type === "div") {
+  //   console.log("wipFiber.alternate: ", wipFiber.alternate);
+  //   console.log("oldFiber: ", oldFiber);
+  // }
+  // if (wipFiber.alternate) {
+  //   throw new Error("STOP");
+  // }
+
   var prevSibling = null;
   while (index < elements.length || oldFiber != null) {
     var element = elements[index];
     var newFiber = null;
     var sameType = oldFiber && element && element.type == oldFiber.type;
+    console.log("index: ", index, " oldFiber: ", oldFiber);
+
+    // console.log("first sameType: ", sameType);
+    // console.log(wipFiber.effectTag);
+
     if (sameType) {
       newFiber = {
         type: oldFiber.type,
@@ -171,14 +197,22 @@ function reconcileChildren(wipFiber, elements) {
       oldFiber.effectTag = "DELETION";
       deletions.push(oldFiber);
     }
+
+    // oldFiber.type === "input"
     if (oldFiber) {
       oldFiber = oldFiber.sibling;
     }
+
+    // div.child = newFiber
     if (index === 0) {
       wipFiber.child = newFiber;
     } else if (element) {
       prevSibling.sibling = newFiber;
     }
+
+    // prevSibling.type === newFiber.type
+    // prevSibling.type === wipFiber.child.type
+    // prevSibling.type === oldFiber.parent.child.type
     prevSibling = newFiber;
     index++;
   }
