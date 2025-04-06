@@ -75,6 +75,7 @@ function commitRoot() {
   deletions.forEach(commitWork);
   commitWork(wipRoot.child);
   currentRoot = wipRoot;
+  console.log(wipRoot);
   wipRoot = null;
 }
 
@@ -143,12 +144,15 @@ function workLoop(deadline) {
 requestIdleCallback(workLoop);
 
 function performUnitOfWork(fiber) {
+  // React element type == fiber.type
+  // div.child == Function Component Counter
   const isFunctionComponent = fiber.type instanceof Function;
   if (isFunctionComponent) {
     updateFunctionComponent(fiber);
   } else {
     updateHostComponent(fiber);
   }
+
   if (fiber.child) {
     return fiber.child;
   }
@@ -161,13 +165,17 @@ function performUnitOfWork(fiber) {
   }
 }
 
+// Tracks the current function component fiber while its hooks are being called
 let wipFiber = null;
 let hookIndex = null;
 
+/** This function will start / restart the whole function component hooks treatment */
 function updateFunctionComponent(fiber) {
+  // Now wipFiber references the same object in memory that fiber, so it can change as it pleases
   wipFiber = fiber;
   hookIndex = 0;
   wipFiber.hooks = [];
+  // We're calling the function reference (fiber.type) with the props as arguments since we may use it inside the function component
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
@@ -184,10 +192,15 @@ function useState(initial) {
 
   const actions = oldHook ? oldHook.queue : [];
   actions.forEach((action) => {
-    hook.state = action(hook.state);
+    if (action instanceof Function) {
+      hook.state = action(hook.state);
+      return;
+    }
+    hook.state = action;
   });
 
   const setState = (action) => {
+    // Updates the hook variable that are already placed inside wipFiber
     hook.queue.push(action);
     wipRoot = {
       dom: currentRoot.dom,
@@ -198,6 +211,8 @@ function useState(initial) {
     deletions = [];
   };
 
+  // Creates a reference to the hook, we will update it and it will be right here with a brand new queue value
+  // This is very important to hooks!!!! Since this links the wipFiber with the hook.queue
   wipFiber.hooks.push(hook);
   hookIndex++;
   return [hook.state, setState];
@@ -270,12 +285,23 @@ const Didact = {
 /** @jsx Didact.createElement */
 function Counter() {
   const [state, setState] = Didact.useState(1);
+  const [name, setName] = Didact.useState("");
   return (
-    <h1 onClick={() => setState((c) => c + 1)} style="user-select: none">
-      Count: {state}
-    </h1>
+    <div>
+      <button onClick={() => setState((c) => c + 1)}>+</button>
+      <button onClick={() => setState((c) => c - 1)}>-</button>
+      <h1>Count: {state}</h1>
+      <h2>Hello, {name}</h2>
+      <input onInput={(e) => setName(e.target.value)} value={name} />
+    </div>
   );
 }
 const element = <Counter />;
+const secondElement = (
+  <div>
+    <Counter />
+    <h1>Heeey!</h1>
+  </div>
+);
 const container = document.getElementById("root");
-Didact.render(element, container);
+Didact.render(secondElement, container);

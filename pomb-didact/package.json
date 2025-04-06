@@ -10,6 +10,7 @@
     "compile:step-iii-and-iv": "npx babel step-iii-and-iv/src/gosling.js --out-file step-iii-and-iv/src/gosling-compiled.js --watch",
     "compile:step-v": "npx babel step-v/src/gosling.js --out-file step-v/src/gosling-compiled.js --watch",
     "compile:step-vi": "npx babel step-vi/src/gosling.js --out-file step-vi/src/gosling-compiled.js --watch",
+    "compile:step-vii-and-viii": "npx babel step-vii-and-viii/src/gosling.js --out-file step-vii-and-viii/src/gosling-compiled.js --watch",
     "dev:step-iii-and-iv": "concurrently \"npm run compile:step-iii-and-iv\" \"npm run test:watch\""
   },
   "keywords": [],
